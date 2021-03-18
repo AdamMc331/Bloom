@@ -86,6 +86,9 @@ private fun PasswordInput() {
         label = {
             Text(text = "Password (8+ characters)")
         },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Password,
+        ),
         visualTransformation = PasswordVisualTransformation(),
         modifier = Modifier
             .fillMaxWidth(),
