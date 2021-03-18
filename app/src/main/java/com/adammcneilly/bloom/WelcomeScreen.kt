@@ -139,8 +139,10 @@ private fun LoginButton() {
 
     TextButton(
         onClick = { /*TODO*/ },
+        shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .fillMaxWidth()
+            .height(48.dp)
             .padding(horizontal = 16.dp),
     ) {
         Text(
