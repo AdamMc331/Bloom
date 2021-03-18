@@ -112,19 +112,9 @@ private fun AppSubtitle() {
 
 @Composable
 private fun CreateAccountButton() {
-    Button(
-        colors = buttonColors(
-            backgroundColor = MaterialTheme.colors.secondary,
-        ),
-        shape = MaterialTheme.shapes.medium,
-        onClick = { /*TODO*/ },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .padding(horizontal = 16.dp),
-    ) {
-        Text("Create account")
-    }
+    BloomSecondaryButton(
+        buttonText = "Create account"
+    )
 }
 
 @Composable
