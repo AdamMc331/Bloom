@@ -7,13 +7,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,12 +74,19 @@ private fun TermsOfServiceLabel() {
 
 @Composable
 private fun PasswordInput() {
+    val textState = remember {
+        mutableStateOf("")
+    }
+
     OutlinedTextField(
-        value = "",
-        onValueChange = {},
+        value = textState.value,
+        onValueChange = { newText ->
+            textState.value = newText
+        },
         label = {
             Text(text = "Password (8+ characters)")
         },
+        visualTransformation = PasswordVisualTransformation(),
         modifier = Modifier
             .fillMaxWidth(),
     )
@@ -82,12 +94,21 @@ private fun PasswordInput() {
 
 @Composable
 private fun EmailInput() {
+    val textState = remember {
+        mutableStateOf("")
+    }
+
     OutlinedTextField(
-        value = "",
-        onValueChange = {},
+        value = textState.value,
+        onValueChange = { newString ->
+            textState.value = newString
+        },
         label = {
             Text(text = "Email address")
         },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Email,
+        ),
         modifier = Modifier
             .fillMaxWidth(),
     )
