@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -66,6 +67,9 @@ private fun PlantCheckbox() {
         onCheckedChange = { isChecked ->
             checkedState.value = isChecked
         },
+        colors = CheckboxDefaults.colors(
+          checkmarkColor = MaterialTheme.colors.background,
+        ),
         modifier = Modifier
             .size(24.dp)
     )
