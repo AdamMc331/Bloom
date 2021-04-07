@@ -3,17 +3,26 @@ package com.adammcneilly.bloom
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.activity.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.adammcneilly.bloom.ui.theme.BloomTheme
 
 class MainActivity : ComponentActivity() {
+    private val homeViewModel: HomeViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return HomeViewModel(
+                    plantRepository = InMemoryPlantService()
+                ) as T
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -28,7 +37,7 @@ class MainActivity : ComponentActivity() {
                         LoginScreen(navController)
                     }
                     composable("home") {
-                        HomeScreen()
+                        HomeScreen(homeViewModel)
                     }
                 }
             }
