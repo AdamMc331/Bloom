@@ -32,6 +32,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -40,13 +42,25 @@ import androidx.compose.ui.unit.dp
 import com.adammcneilly.bloom.ui.theme.BloomTheme
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(homeViewModel: HomeViewModel) {
+    val currentState: State<HomeViewState> = homeViewModel.viewState.collectAsState()
+
+    HomeScreenScaffold(currentState.value)
+}
+
+@Composable
+private fun HomeScreenScaffold(
+    state: HomeViewState,
+) {
     Scaffold(
         bottomBar = {
             BloomBottomBar()
         }
     ) { paddingValues ->
-        HomeScreenContent(paddingValues)
+        HomeScreenContent(
+            paddingValues,
+            state
+        )
     }
 }
 
@@ -100,7 +114,10 @@ private fun RowScope.BloomBottomButton(
 }
 
 @Composable
-private fun HomeScreenContent(paddingValues: PaddingValues) {
+private fun HomeScreenContent(
+    paddingValues: PaddingValues,
+    state: HomeViewState,
+) {
     Surface(
         color = MaterialTheme.colors.background,
         modifier = Modifier
@@ -116,15 +133,21 @@ private fun HomeScreenContent(paddingValues: PaddingValues) {
 
             SearchInput()
 
-            BrowseThemesSection()
+            BrowseThemesSection(
+                state.plantThemes
+            )
 
-            HomeGardenSection()
+            HomeGardenSection(
+                state.homeGardenItems
+            )
         }
     }
 }
 
 @Composable
-private fun HomeGardenSection() {
+private fun HomeGardenSection(
+    homeGardenItems: List<PlantTheme>
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -162,7 +185,7 @@ private fun HomeGardenSection() {
 }
 
 @Composable
-private fun BrowseThemesSection() {
+private fun BrowseThemesSection(themes: List<PlantTheme>) {
     Text(
         text = "Browse themes",
         style = MaterialTheme.typography.h1,
@@ -179,7 +202,7 @@ private fun BrowseThemesSection() {
             .horizontalScroll(rememberScrollState())
             .padding(horizontal = 16.dp),
     ) {
-        defaultPlantThemes.forEach { theme ->
+        themes.forEach { theme ->
             PlantThemeCard(theme)
         }
     }
@@ -217,7 +240,12 @@ private fun SearchInput() {
 )
 @Composable
 private fun HomeScreenPreview() {
+    val previewState = HomeViewState(
+        plantThemes = defaultPlantThemes,
+        homeGardenItems = homeGardenItems.take(2),
+    )
+
     BloomTheme {
-        HomeScreen()
+        HomeScreenScaffold(previewState)
     }
 }
