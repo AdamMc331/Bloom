@@ -1,5 +1,6 @@
 package com.adammcneilly.bloom
 
+import android.content.res.Configuration
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -206,18 +207,17 @@ private fun SearchInput() {
     )
 }
 
-@Preview
+@Preview(
+    name = "Night Mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Preview(
+    name = "Day Mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+)
 @Composable
-private fun PreviewDarkHome() {
-    BloomTheme(darkTheme = true) {
-        HomeScreen()
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewLightHome() {
-    BloomTheme(darkTheme = false) {
+private fun HomeScreenPreview() {
+    BloomTheme {
         HomeScreen()
     }
 }

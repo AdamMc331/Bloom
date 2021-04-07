@@ -1,5 +1,6 @@
 package com.adammcneilly.bloom
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -163,18 +164,17 @@ private fun WelcomeBackground() {
     )
 }
 
-@Preview
+@Preview(
+    name = "Night Mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Preview(
+    name = "Day Mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+)
 @Composable
-private fun PreviewDarkWelcomeScreen() {
-    BloomTheme(darkTheme = true) {
-        WelcomeScreen(rememberNavController())
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewLightWelcomeScreen() {
-    BloomTheme(darkTheme = false) {
-        WelcomeScreen(rememberNavController())
+private fun WelcomeScreenPreview() {
+    BloomTheme {
+        WelcomeScreen(navController = rememberNavController())
     }
 }

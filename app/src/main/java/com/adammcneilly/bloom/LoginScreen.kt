@@ -1,5 +1,6 @@
 package com.adammcneilly.bloom
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -136,18 +137,17 @@ private fun LogInHeader() {
     )
 }
 
-@Preview
+@Preview(
+    name = "Night Mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Preview(
+    name = "Day Mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+)
 @Composable
-private fun PreviewDarkLogin() {
-    BloomTheme(darkTheme = true) {
-        LoginScreen(rememberNavController())
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewLightLogin() {
-    BloomTheme(darkTheme = false) {
+private fun LoginScreenPreview() {
+    BloomTheme {
         LoginScreen(rememberNavController())
     }
 }

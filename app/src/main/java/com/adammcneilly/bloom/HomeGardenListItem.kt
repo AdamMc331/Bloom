@@ -1,5 +1,6 @@
 package com.adammcneilly.bloom
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -109,22 +110,17 @@ private fun PlantImage(plantTheme: PlantTheme) {
     )
 }
 
-@Preview
+@Preview(
+    name = "Night Mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Preview(
+    name = "Day Mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+)
 @Composable
-private fun PreviewDarkItem() {
-    BloomTheme(darkTheme = true) {
-        Surface(
-            color = MaterialTheme.colors.background
-        ) {
-            HomeGardenListItem(plantTheme = homeGardenThemes.first())
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewLightItem() {
-    BloomTheme(darkTheme = false) {
+private fun HomeGardenListItemPreview() {
+    BloomTheme {
         Surface(
             color = MaterialTheme.colors.background
         ) {
