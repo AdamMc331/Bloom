@@ -2,28 +2,10 @@ package com.adammcneilly.bloom
 
 import android.content.res.Configuration
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.BottomAppBar
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -49,6 +31,23 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
 }
 
 @Composable
+private fun HomeScreenLoader(
+    paddingValues: PaddingValues
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .wrapContentSize()
+                .align(Alignment.Center)
+        )
+    }
+}
+
+@Composable
 private fun HomeScreenScaffold(
     state: HomeViewState,
 ) {
@@ -57,10 +56,14 @@ private fun HomeScreenScaffold(
             BloomBottomBar()
         }
     ) { paddingValues ->
-        HomeScreenContent(
-            paddingValues,
-            state
-        )
+        if (state.showLoading) {
+            HomeScreenLoader(paddingValues)
+        } else {
+            HomeScreenContent(
+                paddingValues,
+                state
+            )
+        }
     }
 }
 
