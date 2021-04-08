@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
             BloomTheme {
                 val navController = rememberNavController()
 
-                NavHost(navController, "home") {
+                NavHost(navController, "welcome") {
                     composable("welcome") {
                         WelcomeScreen(navController)
                     }
