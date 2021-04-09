@@ -1,29 +1,12 @@
 package com.adammcneilly.bloom
 
 import android.content.res.Configuration
+import androidx.activity.viewModels
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.BottomAppBar
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -32,21 +15,72 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.adammcneilly.bloom.ui.theme.BloomTheme
 
 @Composable
 fun HomeScreen() {
+    val factory = object : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            val repository = InMemoryPlantService()
+
+            @Suppress("UNCHECKED_CAST")
+            return HomeViewModel(
+                plantRepository = repository
+            ) as T
+        }
+    }
+
+    val homeViewModel: HomeViewModel = viewModel(null, factory)
+
+    val currentState: State<HomeViewState> = homeViewModel.viewState.collectAsState()
+
+    HomeScreenScaffold(currentState.value)
+}
+
+@Composable
+private fun HomeScreenLoader(
+    paddingValues: PaddingValues
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .wrapContentSize()
+                .align(Alignment.Center)
+        )
+    }
+}
+
+@Composable
+private fun HomeScreenScaffold(
+    state: HomeViewState,
+) {
     Scaffold(
         bottomBar = {
             BloomBottomBar()
         }
     ) { paddingValues ->
-        HomeScreenContent(paddingValues)
+        if (state.showLoading) {
+            HomeScreenLoader(paddingValues)
+        } else {
+            HomeScreenContent(
+                paddingValues,
+                state
+            )
+        }
     }
 }
 
@@ -100,7 +134,10 @@ private fun RowScope.BloomBottomButton(
 }
 
 @Composable
-private fun HomeScreenContent(paddingValues: PaddingValues) {
+private fun HomeScreenContent(
+    paddingValues: PaddingValues,
+    state: HomeViewState,
+) {
     Surface(
         color = MaterialTheme.colors.background,
         modifier = Modifier
@@ -116,15 +153,21 @@ private fun HomeScreenContent(paddingValues: PaddingValues) {
 
             SearchInput()
 
-            BrowseThemesSection()
+            BrowseThemesSection(
+                state.plantThemes
+            )
 
-            HomeGardenSection()
+            HomeGardenSection(
+                state.homeGardenItems
+            )
         }
     }
 }
 
 @Composable
-private fun HomeGardenSection() {
+private fun HomeGardenSection(
+    homeGardenItems: List<PlantTheme>
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -155,14 +198,14 @@ private fun HomeGardenSection() {
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp),
     ) {
-        homeGardenThemes.forEach { theme ->
+        homeGardenItems.forEach { theme ->
             HomeGardenListItem(theme)
         }
     }
 }
 
 @Composable
-private fun BrowseThemesSection() {
+private fun BrowseThemesSection(themes: List<PlantTheme>) {
     Text(
         text = "Browse themes",
         style = MaterialTheme.typography.h1,
@@ -179,7 +222,7 @@ private fun BrowseThemesSection() {
             .horizontalScroll(rememberScrollState())
             .padding(horizontal = 16.dp),
     ) {
-        defaultPlantThemes.forEach { theme ->
+        themes.forEach { theme ->
             PlantThemeCard(theme)
         }
     }
@@ -217,7 +260,12 @@ private fun SearchInput() {
 )
 @Composable
 private fun HomeScreenPreview() {
+    val previewState = HomeViewState(
+        plantThemes = defaultPlantThemes,
+        homeGardenItems = homeGardenItems.take(2),
+    )
+
     BloomTheme {
-        HomeScreen()
+        HomeScreenScaffold(previewState)
     }
 }

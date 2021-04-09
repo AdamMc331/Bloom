@@ -3,7 +3,6 @@ package com.adammcneilly.bloom
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -124,7 +123,7 @@ private fun HomeGardenListItemPreview() {
         Surface(
             color = MaterialTheme.colors.background
         ) {
-            HomeGardenListItem(plantTheme = homeGardenThemes.first())
+            HomeGardenListItem(plantTheme = homeGardenItems.first())
         }
     }
 }
