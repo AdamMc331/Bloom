@@ -9,6 +9,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -96,13 +98,13 @@ private fun PasswordInput() {
 @Composable
 private fun EmailInput() {
     val textState = remember {
-        mutableStateOf("")
+        EmailState()
     }
 
     OutlinedTextField(
-        value = textState.value,
+        value = textState.text,
         onValueChange = { newString ->
-            textState.value = newString
+            textState.text = newString
         },
         label = {
             Text(text = "Email address")
@@ -111,11 +113,21 @@ private fun EmailInput() {
             keyboardType = KeyboardType.Email,
         ),
         modifier = Modifier
-            .fillMaxWidth(),
-        isError = true,
+            .fillMaxWidth()
+            .onFocusChanged { focusState ->
+                val isFocused = (focusState == FocusState.Active)
+                textState.onFocusChange(isFocused)
+
+                if (!isFocused) {
+                    textState.enableShowErrors()
+                }
+            },
+        isError = textState.showErrors,
     )
 
-    TextFieldError(textError = "Please provide an email address.")
+    textState.getError()?.let { errorMessage ->
+        TextFieldError(textError = errorMessage)
+    }
 }
 
 @Composable
