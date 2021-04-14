@@ -75,13 +75,13 @@ private fun TermsOfServiceLabel() {
 @Composable
 private fun PasswordInput() {
     val textState = remember {
-        mutableStateOf("")
+        PasswordInputState()
     }
 
     OutlinedTextField(
-        value = textState.value,
+        value = textState.text,
         onValueChange = { newText ->
-            textState.value = newText
+            textState.text = newText
         },
         label = {
             Text(text = "Password (8+ characters)")
@@ -91,8 +91,21 @@ private fun PasswordInput() {
         ),
         visualTransformation = PasswordVisualTransformation(),
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .onFocusChanged { focusState ->
+                val isFocused = (focusState == FocusState.Active)
+                textState.onFocusChange(isFocused)
+
+                if (!isFocused) {
+                    textState.enableShowErrors()
+                }
+            },
+        isError = textState.showErrors
     )
+    
+    textState.getError()?.let { errorMessage ->
+        TextFieldError(textError = errorMessage)
+    }
 }
 
 @Composable
