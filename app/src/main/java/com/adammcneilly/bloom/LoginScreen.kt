@@ -1,6 +1,7 @@
 package com.adammcneilly.bloom
 
 import android.content.res.Configuration
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -9,12 +10,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -111,26 +112,40 @@ private fun PasswordInput() {
             },
         isError = textState.showErrors,
         trailingIcon = {
-            val iconToUse = if (textState.shouldHidePassword) {
-                Icons.Default.VisibilityOff
-            } else {
-                Icons.Default.Visibility
+            Crossfade(targetState = textState.shouldHidePassword) { hidePassword ->
+                if (hidePassword) {
+                    PasswordVisabilityIcon(
+                        iconToUse = Icons.Default.VisibilityOff,
+                        textState = textState
+                    )
+                } else {
+                    PasswordVisabilityIcon(
+                        iconToUse = Icons.Default.Visibility,
+                        textState = textState
+                    )
+                }
             }
-
-            Icon(
-                iconToUse,
-                contentDescription = "Toggle Password Visibility",
-                modifier = Modifier
-                    .clickable {
-                        textState.shouldHidePassword = !textState.shouldHidePassword
-                    },
-            )
         }
     )
 
     textState.getError()?.let { errorMessage ->
         TextFieldError(textError = errorMessage)
     }
+}
+
+@Composable
+private fun PasswordVisabilityIcon(
+    iconToUse: ImageVector,
+    textState: PasswordInputState
+) {
+    Icon(
+        iconToUse,
+        contentDescription = "Toggle Password Visibility",
+        modifier = Modifier
+            .clickable {
+                textState.shouldHidePassword = !textState.shouldHidePassword
+            },
+    )
 }
 
 @Composable
