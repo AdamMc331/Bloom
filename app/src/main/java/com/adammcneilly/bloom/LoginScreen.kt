@@ -1,25 +1,24 @@
 package com.adammcneilly.bloom
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -82,13 +81,13 @@ private fun TermsOfServiceLabel() {
 @Composable
 private fun PasswordInput() {
     val textState = remember {
-        mutableStateOf("")
+        PasswordInputState()
     }
 
     OutlinedTextField(
-        value = textState.value,
+        value = textState.text,
         onValueChange = { newText ->
-            textState.value = newText
+            textState.text = newText
         },
         label = {
             Text(text = "Password (8+ characters)")
@@ -96,22 +95,69 @@ private fun PasswordInput() {
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Password,
         ),
-        visualTransformation = PasswordVisualTransformation(),
+        visualTransformation = if (textState.shouldHidePassword) {
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        },
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .onFocusChanged { focusState ->
+                val isFocused = (focusState == FocusState.Active)
+                textState.onFocusChange(isFocused)
+
+                if (!isFocused) {
+                    textState.enableShowErrors()
+                }
+            },
+        isError = textState.showErrors,
+        trailingIcon = {
+            Crossfade(targetState = textState.shouldHidePassword) { hidePassword ->
+                if (hidePassword) {
+                    PasswordVisabilityIcon(
+                        iconToUse = Icons.Default.VisibilityOff,
+                        textState = textState
+                    )
+                } else {
+                    PasswordVisabilityIcon(
+                        iconToUse = Icons.Default.Visibility,
+                        textState = textState
+                    )
+                }
+            }
+        }
+    )
+
+    textState.getError()?.let { errorMessage ->
+        TextFieldError(textError = errorMessage)
+    }
+}
+
+@Composable
+private fun PasswordVisabilityIcon(
+    iconToUse: ImageVector,
+    textState: PasswordInputState
+) {
+    Icon(
+        iconToUse,
+        contentDescription = "Toggle Password Visibility",
+        modifier = Modifier
+            .clickable {
+                textState.shouldHidePassword = !textState.shouldHidePassword
+            },
     )
 }
 
 @Composable
 private fun EmailInput() {
     val textState = remember {
-        mutableStateOf("")
+        EmailState()
     }
 
     OutlinedTextField(
-        value = textState.value,
+        value = textState.text,
         onValueChange = { newString ->
-            textState.value = newString
+            textState.text = newString
         },
         label = {
             Text(text = "Email address")
@@ -120,8 +166,37 @@ private fun EmailInput() {
             keyboardType = KeyboardType.Email,
         ),
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .onFocusChanged { focusState ->
+                val isFocused = (focusState == FocusState.Active)
+                textState.onFocusChange(isFocused)
+
+                if (!isFocused) {
+                    textState.enableShowErrors()
+                }
+            },
+        isError = textState.showErrors,
     )
+
+    textState.getError()?.let { errorMessage ->
+        TextFieldError(textError = errorMessage)
+    }
+}
+
+@Composable
+private fun TextFieldError(textError: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = textError,
+            modifier = Modifier.fillMaxWidth(),
+            style = LocalTextStyle.current.copy(color = MaterialTheme.colors.error)
+        )
+    }
 }
 
 @Composable
