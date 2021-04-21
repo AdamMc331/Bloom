@@ -1,19 +1,12 @@
 package com.adammcneilly.bloom
 
 import android.content.res.Configuration
-import androidx.activity.viewModels
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -204,29 +197,6 @@ private fun HomeGardenSection(
     }
 }
 
-@Composable
-private fun BrowseThemesSection(themes: List<PlantTheme>) {
-    Text(
-        text = "Browse themes",
-        style = MaterialTheme.typography.h1,
-        modifier = Modifier
-            .paddingFromBaseline(32.dp)
-            .padding(horizontal = 16.dp),
-    )
-
-    Spacer(Modifier.height(16.dp))
-
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
-            .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
-    ) {
-        themes.forEach { theme ->
-            PlantThemeCard(theme)
-        }
-    }
-}
 
 @Composable
 private fun SearchInput() {
